@@ -7,8 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="CV_POSITION") //Caso queria mapear a tabela com um nome diferente ao nome da Classe
 public class Position implements Serializable {
 
 	private static final long serialVersionUID = 1L;

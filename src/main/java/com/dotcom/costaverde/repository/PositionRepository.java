@@ -11,11 +11,11 @@ import com.dotcom.costaverde.model.Position;
 
 public interface PositionRepository extends JpaRepository<Position, Long>{
 	
-	@Query("select p from Position p where p.id in (select max(p2.id) from Position p2 group by p2.placa) and data >= subtime(UTC_TIMESTAMP() , '1:0:0.000000' ) 	order by p.data")
+	@Query("select p from Position p where p.id in (select max(p2.id) from Position p2 group by p2.placa) and data >= subtime(NOW() , '1:0:0.000000' ) 	order by p.data")
   List<Position> findMaxId();
 	
 	@Query("select p from Position p where p.id in (select max(p2.id) from Position p2 where p2.placa = :placa " + 
-			"      and data >= subtime(UTC_TIMESTAMP() , '3:0:0.000000' )" +
+			"      and data >= subtime(NOW() , '3:0:0.000000' )" +
 			" group by p2.latitude, p2.longitude ) order by p.data")
 	List<Position> findOnibus(@Param("placa") String placa);
 

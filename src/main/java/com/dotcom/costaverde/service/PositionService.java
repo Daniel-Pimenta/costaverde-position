@@ -65,7 +65,7 @@ public class PositionService {
 		log.info("Lendo Controle");
 		Optional<Controle> optControle = cr.findById((long) 1);
 		if (!optControle.isPresent()) {
-			log.info("Controle Null");
+			log.info("Iniciando Controle...");
 			controle = new Controle();
 			controle.setId((long) 1);
 			controle.setLastUpdate(new java.sql.Timestamp(now.getTime()));
@@ -77,8 +77,15 @@ public class PositionService {
 			log.info("Controle: Ultima Atual."+controle.getLastUpdate());
 		}
 		log.info("Data Con:"+controle.getLastUpdate());
-		boolean ok = controle.getLocado().equalsIgnoreCase("false") && controle.getLastUpdate().before(toDate(this.dataIni, "yyyy-MM-dd HH:mm:ss"));
-		if (ok) {
+		
+		boolean okWeb = false;
+		okWeb = controle.getLastUpdate().before(toDate(this.dataIni, "yyyy-MM-dd HH:mm:ss")) ? true : okWeb;
+		log.info(okWeb+"");
+		okWeb = controle.getLocado().equalsIgnoreCase("true") ? false : okWeb;
+		log.info(okWeb+"");
+		okWeb = optControle.isPresent() ? okWeb: true;	
+		log.info(okWeb+"");	
+		if (okWeb) {
 			log.info("Buscando do WebService");
 			StringBuffer sbUrl = new StringBuffer();
 			sbUrl.append(url);
@@ -147,8 +154,8 @@ public class PositionService {
 				pos.setId(0);
 				pos.setIdPontoReferencia(dado.getIdpontoreferencia());
 				
-				pos.setLatitude (dado.getLatitude().replace(",", ".").substring(0,6));
-				pos.setLongitude(dado.getLongitude().replace(",", ".").substring(0,6));
+				pos.setLatitude (dado.getLatitude().replace(",", ".").substring(0,7));
+				pos.setLongitude(dado.getLongitude().replace(",", ".").substring(0,7));
 				
 				String placa = dado.getPlaca().trim().replace(" ", "");
 				if (placa.length()==6) {

@@ -5,8 +5,10 @@ import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="CV_CONTROLE") //Caso queria mapear a tabela com um nome diferente ao nome da Classe
 public class Controle implements Serializable  {
 	
 	private static final long serialVersionUID = 1L;
