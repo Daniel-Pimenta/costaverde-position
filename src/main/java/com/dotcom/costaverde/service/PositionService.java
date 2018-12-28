@@ -56,12 +56,13 @@ public class PositionService {
 
 	private static final Logger log = LoggerFactory.getLogger(PositionService.class);
 
-	JAXBContext jaxbContext;
-	DocumentElement documentElement;
-	String saidaXML;
+	private JAXBContext jaxbContext;
+	private DocumentElement documentElement;
+	private String saidaXML;
+	private java.util.Date now;
+	
 
 	public List<Position> getPosition() {
-		java.util.Date now = new java.util.Date();
 		this.getPeriodo();
 
 		log.info("Lendo Controle");
@@ -195,10 +196,12 @@ public class PositionService {
 	public void getPeriodo() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar c = Calendar.getInstance();
-		this.dataFim = sdf.format(c.getTime());
 		if (profile.equalsIgnoreCase("prd")) {
 			c.add(Calendar.HOUR_OF_DAY, -2);
 		}
+		
+		this.now = c.getTime();
+		this.dataFim = sdf.format(c.getTime());
 		c.add(Calendar.MINUTE, -30);
 		this.dataIni = sdf.format(c.getTime());
 		log.info("Data Ini:" + this.dataIni);
