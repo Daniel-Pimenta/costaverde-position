@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { height: 100% }
+    </style>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCV2SHiXgyWATBX96jtWJM7mv4zVQ5lZCQ"></script>
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(-22.89861,	-43.21078),
+          zoom: 10	,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+        //nova posição
+        var KOY3572 = new google.maps.LatLng(-22.86352,	-43.25076);
+        var marker = new google.maps.Marker({
+        	position: KOY3572,//seta posição
+          map: map,//Objeto mapa
+          title:"KOY3572"
+        });        
+        var KWM2862 = new google.maps.LatLng(-22.89879,	-43.21057);
+        var marker = new google.maps.Marker({
+        	position: KWM2862,//seta posição
+          map: map,//Objeto mapa
+          title:"KWM2862"
+        });
+      }
+
+    </script>
+  </head>
+  <body onload="initialize()">
+  <nav>
+    <div class="nav-wrapper row green">
+      <div class="col s8 m10" style="margin:0px;">
+      <a href="#!" class="brand-logo left" style="font-size:20px;" ><i class="material-icons" style="font-size:4rem">directions_bus</i>
+      Costa Verde Transp.
+      </a>
+      </div>
+      <div class="col s4 m2 center">
+        <ul class="right">
+          <li><a href="/costaverde-position/api/hoje">Lista</a></li>
+          </ul>
+      </div>
+    </div>
+  </nav>
+  
+    <div id="map_canvas" style="width:100%; height:100%"></div>
+  </body>
+</html>

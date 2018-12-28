@@ -1,0 +1,111 @@
+<html xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mapa</title>
+  <!--Let browser know website is optimized for mobile-->
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  
+  <!--Import Google Icon Font-->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+  <!--Import font-awesome.css-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+  <!--Import materialize.css-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+
+  <!-- Load Leaflet from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"/>
+  
+  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+
+  <!-- Load Esri Leaflet from CDN
+  <script src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js"></script>
+  -->
+     
+  <style>
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      } 
+      .myMap { 
+        height: 100%;
+      }
+  </style>
+  
+</head>
+<body>
+  <nav>
+    <div class="nav-wrapper row green">
+      <div class="col s8 m10" style="margin:0px;">
+      <a href="#!" class="brand-logo left" style="font-size:20px;" ><i class="material-icons" style="font-size:4rem">directions_bus</i>
+      Costa Verde Transp.
+      </a>
+      </div>
+      <div class="col s4 m2 center">
+        <ul class="right">
+          <li><a href="/costaverde-position/api/hoje">Lista</a></li>
+          </ul>
+      </div>
+    </div>
+  </nav>
+    <div id="map" class="myMap"></div>
+
+  <!--JavaScript at end of body for optimized loading-->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+  $(document).ready(function() {
+	  wh = $(window).height() -65;
+	  $(".myMap").css({"height": wh});
+	});
+  
+  </script>
+  <script th:inline="javascript" type="text/javascript"> 
+  // <![CDATA[ 
+  var myIcon  = L.divIcon({className:"my-div-icon",html:"<i class='material-icons green-text text-darken-3'>directions_bus</i>"});
+  var myObjs = /*[[${positions}]]*/ null;
+  var oPlaca = /*[[${placa}]]*/ null;
+  
+  var myZoon = (oPlaca == "TODOS" ? 8 : 11);
+  
+  var openStreet = true;
+  var mapbox     = false;
+	var o = myObjs[0];
+	var latlng = L.latLng(o.latitude, o.longitude);
+  var map        = L.map("map", {center: latlng , zoom: myZoon });
+  
+  if (openStreet) {
+  	L.tileLayer(
+	  	'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', 
+			{
+		  	foo: 'bar',
+		  	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Unknow</a>',
+		  	maxZoom: 18
+			}
+		).addTo(map);
+  }else if(mapbox){
+  	L.tileLayer(
+	  	'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZGFuaWVscGltZW50YSIsImEiOiJjanE1a2phZ2IyNWxkNDJuenYzb3c1czJ2In0.wIC43hRaicnqsdm7ri85ig', 
+			{
+	    	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+	    	maxZoom: 18,
+	    	id: 'mapbox.streets',
+	    	accessToken: 'pk.eyJ1IjoiZGFuaWVscGltZW50YSIsImEiOiJjanE1a2phZ2IyNWxkNDJuenYzb3c1czJ2In0.wIC43hRaicnqsdm7ri85ig'
+			}
+		).addTo(map);
+  }
+  for (var i = 0; i < myObjs.length; i++) { 
+ 	 	o = myObjs[i];
+		latlng = L.latLng(o.latitude, o.longitude);
+		var myTitle = o.placa + "\n" + o.nome + "\n" + (o.tipo=="G" ? "Garagem" : "Parada") + "\n" + o.data.substr(11,5);
+  	L.marker(latlng, {title: myTitle, icon: myIcon, riseOnHover:true} ).addTo(map);	
+  } 
+  // ]]> 
+	</script>
+  
+  
+</body>
+</html>
