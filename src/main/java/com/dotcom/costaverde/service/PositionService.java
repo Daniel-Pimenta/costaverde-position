@@ -48,6 +48,9 @@ public class PositionService {
 
 	@Value("${sigla.costaverde.ws.senha}")
 	String senha;
+	
+	@Value("${spring.profiles.active}")
+  String profile;
 
 	String dataIni;
 	String dataFim;
@@ -116,14 +119,14 @@ public class PositionService {
 		}else {
       log.info("Buscando do Banco de Dados !");
 		}
-		List<Position> positions = pr.findMaxId();
+		List<Position> positions = profile.equalsIgnoreCase("prd") ? pr.findMaxIdPrd() : pr.findMaxIdDev();
 		log.info("Ok : "+positions.size());
 		return positions;
 	}
 
 	public List<Position> getOnibus(String placa){
 		log.info("getOnibus("+placa+")");
-		List<Position> positions = pr.findOnibus(placa);
+		List<Position> positions = profile.equalsIgnoreCase("prd") ? pr.findOnibusPrd(placa) : pr.findOnibusDev(placa);
 		log.info("getOnibus("+positions.size()+")");
 		return positions;
 	}
@@ -188,10 +191,6 @@ public class PositionService {
 		}
 		return null;
 	}
-
-	
-	@Value("${spring.profiles.active}")
-  private String profile;
 	
 	public void getPeriodo() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
