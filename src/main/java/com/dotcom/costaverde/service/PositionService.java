@@ -121,7 +121,7 @@ public class PositionService {
 			
 			Optional<Controle> optControle = cr.findById((long) 1);
 			Controle controle = optControle.get();
-			controle.setLastUpdate(toDate(this.dataFim, "dd/MM/yyyy HH:mm:ss"));
+			controle.setLastUpdate(toDate(this.dataFim, "yyyy-MM-dd HH:mm:ss"));
 			controle.setLocado("false");
 			cr.save(controle);
 			
