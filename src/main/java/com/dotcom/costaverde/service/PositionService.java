@@ -64,9 +64,8 @@ public class PositionService {
 	
 
 	public List<Position> getPosition() {
-		this.getPeriodo();
-
 		log.info("Lendo Controle");
+		this.getPeriodo();
 		Optional<Controle> optControle = cr.findById((long) 1);
 		if (!optControle.isPresent()) {
 			log.info("Iniciando Controle...");
@@ -77,11 +76,9 @@ public class PositionService {
 			cr.save(controle);
 		} else {
 			controle = optControle.get();
-			log.info("Controle: DB Bloqueado."+controle.getLocado());
-			log.info("Controle: Ultima Atual."+controle.getLastUpdate());
 		}
 		log.info("Data Con:"+controle.getLastUpdate());
-		
+		log.info("Data DB :"+pr.getHoraDB());
 		boolean okWeb = false;
 		okWeb = controle.getLastUpdate().before(toDate(this.dataIni, "yyyy-MM-dd HH:mm:ss")) ? true : okWeb;
 		log.info(okWeb+"");
@@ -89,31 +86,9 @@ public class PositionService {
 		log.info(okWeb+"");
 		okWeb = optControle.isPresent() ? okWeb: true;	
 		log.info(okWeb+"");	
+		
 		if (okWeb) {
-			log.info("Buscando do WebService");
-			StringBuffer sbUrl = new StringBuffer();
-			sbUrl.append(url);
-			sbUrl.append("UsuarioSigla=" + usuario + "&SenhaSigla=" + senha + "&");
-			sbUrl.append("dataini=" + dataIni + "&");
-			sbUrl.append("datafim=" + dataFim);
-			log.info("PositionService.getPosition(" + sbUrl.toString() + ")");
-			getXML(sbUrl.toString());
-			try {
-				jaxbContext = JAXBContext.newInstance(DocumentElement.class);
-				Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-				// URL newURL = new URL(sbUrl.toString());
-				StringReader reader = new StringReader(saidaXML);
-				documentElement = (DocumentElement) jaxbUnmarshaller.unmarshal(reader);
-				savePosition(documentElement);
-				
-				controle.setLastUpdate(new java.sql.Timestamp(now.getTime()));
-				controle.setLocado("false");
-				cr.save(controle);
-				
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				e.printStackTrace();
-			}
+			webService();
 		}else {
       log.info("Buscando do Banco de Dados !");
 		}
@@ -127,6 +102,36 @@ public class PositionService {
 		List<Position> positions = profile.equalsIgnoreCase("prd") ? pr.findOnibusPrd(placa) : pr.findOnibusDev(placa);
 		log.info("getOnibus("+positions.size()+")");
 		return positions;
+	}
+	
+	public void webService() {
+		log.info("Buscando do WebService");
+		StringBuffer sbUrl = new StringBuffer();
+		sbUrl.append(url);
+		sbUrl.append("UsuarioSigla=" + usuario + "&SenhaSigla=" + senha + "&");
+		sbUrl.append("dataini=" + this.dataIni + "&");
+		sbUrl.append("datafim=" + this.dataFim);
+		log.info("webService(" + sbUrl.toString() + ")");
+		getXML(sbUrl.toString());
+		try {
+			jaxbContext = JAXBContext.newInstance(DocumentElement.class);
+			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+			// URL newURL = new URL(sbUrl.toString());
+			StringReader reader = new StringReader(this.saidaXML);
+			documentElement = (DocumentElement) jaxbUnmarshaller.unmarshal(reader);
+			savePosition(documentElement);
+			
+			Optional<Controle> optControle = cr.findById((long) 1);
+			Controle controle = optControle.get();
+			controle.setLastUpdate(new java.sql.Timestamp(now.getTime()));
+			controle.setLocado("false");
+			cr.save(controle);
+			
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			e.printStackTrace();
+		}
+		log.info("webService(FIM)");
 	}
 	
 	public void getXML(String uri) {
@@ -147,7 +152,7 @@ public class PositionService {
 	}
 
 	public void savePosition(DocumentElement doc) {
-		log.info("PositionService.savePosition(" + doc.getSize() + ")");
+		log.info("SavePosition(" + doc.getSize() + ")...");
 		Position pos = new Position();
 		if (doc.getSize() > 0) {
 			List<Dados> dados = doc.getDados();
@@ -158,8 +163,11 @@ public class PositionService {
 				pos.setId(0);
 				pos.setIdPontoReferencia(dado.getIdpontoreferencia());
 				
-				pos.setLatitude (dado.getLatitude().replace(",", ".").substring(0,6));
-				pos.setLongitude(dado.getLongitude().replace(",", ".").substring(0,6));
+				String lat = dado.getLatitude() + "0000";
+				String lon = dado.getLongitude() + "0000";
+				
+				pos.setLatitude (lat.replace(",", ".").substring(0,7));
+				pos.setLongitude(lon.replace(",", ".").substring(0,6));
 				
 				String placa = dado.getPlaca().trim().replace(" ", "");
 				if (placa.length()==7) {
@@ -174,7 +182,7 @@ public class PositionService {
 				pr.save(pos);
 			}
 		}
-		log.info("PositionService.savePosition(FIM)");
+		log.info("SavePosition(FIM)");
 	}
 
 	public Timestamp toDate(String strDate, String mask) {
@@ -191,6 +199,7 @@ public class PositionService {
 	}
 	
 	public void getPeriodo() {
+		log.info("GetPeriodo...");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 		if (profile.equalsIgnoreCase("prd")) {

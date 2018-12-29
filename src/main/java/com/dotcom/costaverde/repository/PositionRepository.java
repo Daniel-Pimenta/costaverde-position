@@ -25,5 +25,10 @@ public interface PositionRepository extends JpaRepository<Position, Long>{
 			"      and data >= subtime(NOW() , '3:0:0.000000' )" +
 			" group by p2.latitude, p2.longitude ) order by p.data")
 	List<Position> findOnibusDev(@Param("placa") String placa);
+
+	@Query("select NOW() from Controle")
+	String getHoraDB();
 	
 }
+
+
