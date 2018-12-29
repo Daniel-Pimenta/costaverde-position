@@ -52,6 +52,7 @@ public class PositionService {
 
 	String dataIni;
 	String dataFim;
+	String dataBD;
 
 	Controle controle;
 
@@ -78,7 +79,7 @@ public class PositionService {
 			controle = optControle.get();
 		}
 		log.info("Data Con:"+controle.getLastUpdate());
-		log.info("Data DB :"+pr.getHoraDB());
+		log.info("Data DB :"+this.dataBD);
 		boolean okWeb = false;
 		okWeb = controle.getLastUpdate().before(toDate(this.dataIni, "yyyy-MM-dd HH:mm:ss")) ? true : okWeb;
 		log.info(okWeb+"");
@@ -92,14 +93,14 @@ public class PositionService {
 		}else {
       log.info("Buscando do Banco de Dados !");
 		}
-		List<Position> positions = profile.equalsIgnoreCase("prd") ? pr.findMaxIdPrd() : pr.findMaxIdDev();
+		List<Position> positions = pr.findMaxId(this.dataFim);
 		log.info("Ok : "+positions.size());
 		return positions;
 	}
 
 	public List<Position> getOnibus(String placa){
 		log.info("getOnibus("+placa+")");
-		List<Position> positions = profile.equalsIgnoreCase("prd") ? pr.findOnibusPrd(placa) : pr.findOnibusDev(placa);
+		List<Position> positions = pr.findOnibus(placa, this.dataFim);
 		log.info("getOnibus("+positions.size()+")");
 		return positions;
 	}
@@ -123,7 +124,7 @@ public class PositionService {
 			
 			Optional<Controle> optControle = cr.findById((long) 1);
 			Controle controle = optControle.get();
-			controle.setLastUpdate(new java.sql.Timestamp(now.getTime()));
+			controle.setLastUpdate(toDate(this.dataFim, "dd/MM/yyyy HH:mm:ss"));
 			controle.setLocado("false");
 			cr.save(controle);
 			
@@ -206,7 +207,7 @@ public class PositionService {
 			c.add(Calendar.HOUR_OF_DAY, -2);
 		}
 		
-		this.now = c.getTime();
+		this.dataBD = pr.getHoraDB();
 		this.dataFim = sdf.format(c.getTime());
 		c.add(Calendar.MINUTE, -30);
 		this.dataIni = sdf.format(c.getTime());

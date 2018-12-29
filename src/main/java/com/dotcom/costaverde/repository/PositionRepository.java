@@ -10,21 +10,13 @@ import com.dotcom.costaverde.model.Position;
 
 public interface PositionRepository extends JpaRepository<Position, Long>{
 	
-	@Query("select p from Position p where p.id in (select max(p2.id) from Position p2 group by p2.placa) and data >= subtime(NOW() , '3:0:0.000000' ) 	order by p.data")
-	List<Position> findMaxIdPrd();
-
-	@Query("select p from Position p where p.id in (select max(p2.id) from Position p2 group by p2.placa) and data >= subtime(NOW() , '1:0:0.000000' ) 	order by p.data")
-	List<Position> findMaxIdDev();
-	
-	@Query("select p from Position p where p.id in (select max(p2.id) from Position p2 where p2.placa = :placa " + 
-			"      and data >= subtime(NOW() , '5:0:0.000000' )" +
-			" group by p2.latitude, p2.longitude ) order by p.data")
-	List<Position> findOnibusPrd(@Param("placa") String placa);
+	@Query("select p from Position p where p.id in (select max(p2.id) from Position p2 group by p2.placa) and data >= subtime( :dataFim , '1:0:0.000000' ) 	order by p.data")
+	List<Position> findMaxId(@Param("dataFim") String dataFim);
 
 	@Query("select p from Position p where p.id in (select max(p2.id) from Position p2 where p2.placa = :placa " + 
-			"      and data >= subtime(NOW() , '3:0:0.000000' )" +
+			"      and data >= subtime(:dataFim , '3:0:0.000000' )" +
 			" group by p2.latitude, p2.longitude ) order by p.data")
-	List<Position> findOnibusDev(@Param("placa") String placa);
+	List<Position> findOnibus(@Param("placa") String placa, @Param("dataFim") String dataFim);
 
 	@Query("select NOW() from Controle")
 	String getHoraDB();
