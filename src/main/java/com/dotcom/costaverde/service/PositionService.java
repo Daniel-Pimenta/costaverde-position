@@ -61,8 +61,6 @@ public class PositionService {
 	private JAXBContext jaxbContext;
 	private DocumentElement documentElement;
 	private String saidaXML;
-	private java.util.Date now;
-	
 
 	public List<Position> getPosition() {
 		log.info("Lendo Controle");
@@ -72,7 +70,7 @@ public class PositionService {
 			log.info("Iniciando Controle...");
 			controle = new Controle();
 			controle.setId((long) 1);
-			controle.setLastUpdate(new java.sql.Timestamp(now.getTime()));
+			controle.setLastUpdate(toDate(this.dataFim, "dd/MM/yyyy HH:mm:ss"));
 			controle.setLocado("false");
 			cr.save(controle);
 		} else {
