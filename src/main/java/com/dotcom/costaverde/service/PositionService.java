@@ -70,7 +70,7 @@ public class PositionService {
 			log.info("Iniciando Controle...");
 			controle = new Controle();
 			controle.setId((long) 1);
-			controle.setLastUpdate(toDate(this.dataFim, "dd/MM/yyyy HH:mm:ss"));
+			controle.setLastUpdate(toDate(this.dataFim, "yyyy-MM-dd HH:mm:ss"));
 			controle.setLocado("false");
 			cr.save(controle);
 		} else {
