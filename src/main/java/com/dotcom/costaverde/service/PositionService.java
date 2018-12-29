@@ -63,7 +63,6 @@ public class PositionService {
 	private String saidaXML;
 
 	public List<Position> getPosition() {
-		log.info("Lendo Controle");
 		this.getPeriodo();
 		Optional<Controle> optControle = cr.findById((long) 1);
 		if (!optControle.isPresent()) {
@@ -74,10 +73,10 @@ public class PositionService {
 			controle.setLocado("false");
 			cr.save(controle);
 		} else {
+			log.info("Lendo Controle...");
 			controle = optControle.get();
 		}
 		log.info("Data Con:"+controle.getLastUpdate());
-		log.info("Data DB :"+this.dataBD);
 		boolean okWeb = false;
 		okWeb = controle.getLastUpdate().before(toDate(this.dataIni, "yyyy-MM-dd HH:mm:ss")) ? true : okWeb;
 		log.info(okWeb+"");
@@ -211,6 +210,7 @@ public class PositionService {
 		this.dataIni = sdf.format(c.getTime());
 		log.info("Data Ini:" + this.dataIni);
 		log.info("Data Fim:" + this.dataFim);
+		log.info("Data DB :" + this.dataBD);
 	}
 
 }
