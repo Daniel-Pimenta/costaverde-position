@@ -16,8 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -160,11 +158,11 @@ public class PositionService {
 				pos.setId(0);
 				pos.setIdPontoReferencia(dado.getIdpontoreferencia());
 				
-				pos.setLatitude (dado.getLatitude().replace(",", ".").substring(0,7));
-				pos.setLongitude(dado.getLongitude().replace(",", ".").substring(0,7));
+				pos.setLatitude (dado.getLatitude().replace(",", ".").substring(0,6));
+				pos.setLongitude(dado.getLongitude().replace(",", ".").substring(0,6));
 				
 				String placa = dado.getPlaca().trim().replace(" ", "");
-				if (placa.length()==6) {
+				if (placa.length()==7) {
 					placa = placa.substring(0, 3) + "-" + placa.substring(3);
 				}
 				pos.setPlaca(placa);
