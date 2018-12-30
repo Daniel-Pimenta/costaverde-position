@@ -132,7 +132,7 @@ public class PositionService {
 		log.info("webService(FIM)");
 	}
 	
-	public void getXML(String uri) {
+	private void getXML(String uri) {
 		RestTemplate rest;
 		HttpHeaders headers;
 
@@ -199,11 +199,13 @@ public class PositionService {
 	public void getPeriodo() {
 		log.info("GetPeriodo...");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		log.info("1");
 		Calendar c = Calendar.getInstance();
+		log.info(profile);
 		if (profile.equalsIgnoreCase("prd")) {
 			c.add(Calendar.HOUR_OF_DAY, -2);
 		}
-		
+		log.info("3");
 		this.dataBD = pr.getHoraDB();
 		this.dataFim = sdf.format(c.getTime());
 		c.add(Calendar.MINUTE, -30);

@@ -17,7 +17,6 @@
 
 </head>
 <body>
-
   <nav>
     <div class="nav-wrapper row green">
       <div class="col s8 m10" style="margin:0px;">
@@ -27,40 +26,46 @@
       </div>
       <div class="col s4 m2 center">
         <ul class="right">
-          <li><a href="/costaverde-position/api/mapa">Mapa</a></li>
+          <li><a href="/costaverde-position/api/hoje">Lista</a></li>
           </ul>
       </div>
     </div>
   </nav>
   <div class="container">
-    <div class="card-panel teal lighten-4">
-    ULTIMA POSIÇÃO INFORMADA
-    <span class="new badge" th:text="${size}"></span>
-    </div>
-    
-      <table class="highlight">
-        <thead>
-          <tr>
-              <th>#</th>
-              <th>Placa</th>
-              <th>Ultima Posição</th>
-              <th>Hora</th>
-              <th>Mapa</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr th:each="p : ${positions}">
-            <td><span th:text="${p.id}"></span></td>
-            <td><span th:text="${p.placa}"></span></td>
-            <td><span th:text="${p.nome}"></span></td>
-            <td><span th:text="${p.dataFim == null} ? ${p.toString(p.dataIni)} : ${p.toString(p.dataFim)}"></span></td>
-            <td><a th:href="'/costaverde-position/api/mapa/' + ${p.placa}"><i class="material-icons left">place</i></a></td>
-          </tr>
-        </tbody>
-      </table>
-    
-    
+  
+  <h2>Hummmmm...  Deu ruin aqui !</h2>
+  <table>
+    <tr>
+        <td>Date</td>
+        <td th:text="${timestamp}"/>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td th:text="${path}"/>
+    </tr>
+    <tr>
+        <td>Error</td>
+        <td th:text="${error}"/>
+    </tr>
+    <tr>
+        <td>Status</td>
+        <td th:text="${status}"/>
+    </tr>
+    <tr>
+        <td>Message</td>
+        <td th:text="${message}"/>
+    </tr>
+    <tr>
+        <td>Exception</td>
+        <td th:text="${exception}"/>
+    </tr>
+    <tr>
+        <td>Trace</td>
+        <td>
+            <pre th:text="${trace}"></pre>
+        </td>
+    </tr>
+  </table>
   </div>
   <!--JavaScript at end of body for optimized loading-->
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>

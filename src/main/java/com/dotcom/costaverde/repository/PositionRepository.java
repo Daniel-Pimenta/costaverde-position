@@ -15,7 +15,7 @@ public interface PositionRepository extends JpaRepository<Position, Long>{
 
 	@Query("select p from Position p where p.id in (select max(p2.id) from Position p2 where p2.placa = :placa " + 
 			"      and data >= subtime(:dataFim , '3:0:0.000000' )" +
-			" group by p2.latitude, p2.longitude ) order by p.data")
+			" group by nome ) order by p.data")
 	List<Position> findOnibus(@Param("placa") String placa, @Param("dataFim") String dataFim);
 
 	@Query("select NOW() from Controle")
