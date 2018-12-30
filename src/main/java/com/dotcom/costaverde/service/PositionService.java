@@ -34,27 +34,29 @@ import com.dotcom.costaverde.repository.PositionRepository;
 public class PositionService {
 
 	@Autowired
-	PositionRepository pr;
+	private PositionRepository pr;
 	@Autowired
-	ControleRepository cr;
+	private ControleRepository cr;
 
 	@Value("${sigla.costaverde.ws.url}")
-	String url;
+	private String url;
 
 	@Value("${sigla.costaverde.ws.usuario}")
-	String usuario;
+	private String usuario;
 
 	@Value("${sigla.costaverde.ws.senha}")
-	String senha;
+	private String senha;
 	
 	@Value("${spring.profiles.active}")
-  String profile;
+	private String profile;
 
-	String dataIni;
-	String dataFim;
-	String dataBD;
+	private String dataIni;
+	private String dataFim;
+	private String dataBD;
+	private java.sql.Timestamp lastUpDate;
+	private boolean lock;
 
-	Controle controle;
+	private Controle controle;
 
 	private static final Logger log = LoggerFactory.getLogger(PositionService.class);
 
@@ -67,20 +69,18 @@ public class PositionService {
 		Optional<Controle> optControle = cr.findById((long) 1);
 		if (!optControle.isPresent()) {
 			log.info("Iniciando Controle...");
-			controle = new Controle();
-			controle.setId((long) 1);
-			controle.setLastUpdate(toDate(this.dataFim, "yyyy-MM-dd HH:mm:ss"));
-			controle.setLocado("false");
-			cr.save(controle);
+      controle(true);
 		} else {
 			log.info("Lendo Controle...");
 			controle = optControle.get();
+			this.lastUpDate = controle.getLastUpdate();
+			this.lock = controle.getLocado().equalsIgnoreCase("true") ? true : false;
 		}
-		log.info("Data Con:"+controle.getLastUpdate());
+		log.info("Data Con:"+lastUpDate);
 		boolean okWeb = false;
-		okWeb = controle.getLastUpdate().before(toDate(this.dataIni, "yyyy-MM-dd HH:mm:ss")) ? true : okWeb;
+		okWeb = lastUpDate.before(toDate(this.dataIni, "yyyy-MM-dd HH:mm:ss")) ? true : okWeb;
 		log.info(okWeb+"");
-		okWeb = controle.getLocado().equalsIgnoreCase("true") ? false : okWeb;
+		okWeb = lock ? false : okWeb;
 		log.info(okWeb+"");
 		okWeb = optControle.isPresent() ? okWeb: true;	
 		log.info(okWeb+"");	
@@ -118,13 +118,7 @@ public class PositionService {
 			StringReader reader = new StringReader(this.saidaXML);
 			documentElement = (DocumentElement) jaxbUnmarshaller.unmarshal(reader);
 			savePosition(documentElement);
-			
-			Optional<Controle> optControle = cr.findById((long) 1);
-			Controle controle = optControle.get();
-			controle.setLastUpdate(toDate(this.dataFim, "yyyy-MM-dd HH:mm:ss"));
-			controle.setLocado("false");
-			cr.save(controle);
-			
+			controle(false);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
@@ -146,7 +140,6 @@ public class PositionService {
 		log.info("Status Code:"+responseEntity.getStatusCode().toString());
 		saidaXML = responseEntity.getBody();
 		saidaXML = saidaXML.replace("<![CDATA[", "").replace("]]>", "");
-		// log.info(saidaXML);
 	}
 
 	public void savePosition(DocumentElement doc) {
@@ -198,14 +191,12 @@ public class PositionService {
 	
 	public void getPeriodo() {
 		log.info("GetPeriodo...");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		log.info("1");
-		Calendar c = Calendar.getInstance();
 		log.info(profile);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar c = Calendar.getInstance();
 		if (profile.equalsIgnoreCase("prd")) {
 			c.add(Calendar.HOUR_OF_DAY, -2);
 		}
-		log.info("3");
 		this.dataBD = pr.getHoraDB();
 		this.dataFim = sdf.format(c.getTime());
 		c.add(Calendar.MINUTE, -30);
@@ -215,4 +206,18 @@ public class PositionService {
 		log.info("Data DB :" + this.dataBD);
 	}
 
+	public void controle(boolean lock) {
+		Optional<Controle> optControle = cr.findById((long) 1);
+		Controle controle = optControle.get();
+		controle.setLastUpdate(toDate(this.dataFim, "yyyy-MM-dd HH:mm:ss"));
+		controle.setLocado(String.valueOf(lock));
+		cr.save(controle);
+		if (profile.equalsIgnoreCase("prd")) {
+			this.lastUpDate = controle.getHoraPrd();
+		}else {
+			this.lastUpDate = controle.getLastUpdate();
+		}
+		this.lock = controle.getLocado().equalsIgnoreCase("true") ? true : false;
+	}
+	
 }

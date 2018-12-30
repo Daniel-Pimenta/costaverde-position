@@ -2,6 +2,7 @@ package com.dotcom.costaverde.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Calendar;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,6 +36,13 @@ public class Controle implements Serializable  {
 	}
 	public void setLocado(String locado) {
 		this.locado = locado;
+	}
+	
+	public Timestamp getHoraPrd() {
+		Calendar c = Calendar.getInstance();
+		c.setTime(lastUpdate);
+		c.add(Calendar.HOUR_OF_DAY, -2);
+		return (Timestamp) c.getTime();
 	}
 	
 
