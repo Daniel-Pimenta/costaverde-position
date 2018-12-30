@@ -43,8 +43,11 @@ public class Controle implements Serializable  {
 		c.setTime(lastUpdate);
 		System.out.println(c.getTime());
 		c.add(Calendar.HOUR_OF_DAY, -2);
-		System.out.println(c.getTime());
-		return (Timestamp) c.getTime();
+    Timestamp ts = new Timestamp(c.getTimeInMillis());  
+    System.out.println(ts.getTime());
+    return ts;  
+		
+		
 	}
 	
 
