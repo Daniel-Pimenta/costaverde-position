@@ -73,7 +73,11 @@ public class PositionService {
 		} else {
 			log.info("Lendo Controle...");
 			controle = optControle.get();
-			this.lastUpDate = controle.getLastUpdate();
+			if (profile.equalsIgnoreCase("prd")) {
+				this.lastUpDate = controle.getHoraPrd();
+			}else {
+				this.lastUpDate = controle.getLastUpdate();
+			}
 			this.lock = controle.getLocado().equalsIgnoreCase("true") ? true : false;
 		}
 		log.info("Data Con:"+lastUpDate);
