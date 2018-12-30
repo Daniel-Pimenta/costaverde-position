@@ -41,7 +41,9 @@ public class Controle implements Serializable  {
 	public Timestamp getHoraPrd() {
 		Calendar c = Calendar.getInstance();
 		c.setTime(lastUpdate);
+		System.out.println(c.getTime());
 		c.add(Calendar.HOUR_OF_DAY, -2);
+		System.out.println(c.getTime());
 		return (Timestamp) c.getTime();
 	}
 	
