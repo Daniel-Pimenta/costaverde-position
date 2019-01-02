@@ -73,14 +73,10 @@ public class PositionService {
 		} else {
 			log.info("Lendo Controle...");
 			controle = optControle.get();
-			if (profile.equalsIgnoreCase("prd")) {
-				this.lastUpDate = controle.getHoraPrd();
-			}else {
-				this.lastUpDate = controle.getLastUpdate();
-			}
+			this.lastUpDate = controle.getLastUpdate();
 			this.lock = controle.getLocado().equalsIgnoreCase("true") ? true : false;
 		}
-		log.info("Data Con:"+lastUpDate);
+		log.info("Data Upd:"+lastUpDate);
 		boolean okWeb = false;
 		okWeb = lastUpDate.before(toDate(this.dataIni, "yyyy-MM-dd HH:mm:ss")) ? true : okWeb;
 		log.info(okWeb+"");
@@ -147,6 +143,7 @@ public class PositionService {
 	}
 
 	public void savePosition(DocumentElement doc) {
+		pr.limpaBanco(this.dataIni);
 		log.info("SavePosition(" + doc.getSize() + ")...");
 		Position pos = new Position();
 		if (doc.getSize() > 0) {
@@ -211,17 +208,15 @@ public class PositionService {
 	}
 
 	public void controle(boolean lock) {
-		Optional<Controle> optControle = cr.findById((long) 1);
-		Controle controle = optControle.get();
+		controle = new Controle();
+		controle.setId(1);
 		controle.setLastUpdate(toDate(this.dataFim, "yyyy-MM-dd HH:mm:ss"));
 		controle.setLocado(String.valueOf(lock));
+		
 		cr.save(controle);
-		if (profile.equalsIgnoreCase("prd")) {
-			this.lastUpDate = controle.getHoraPrd();
-		}else {
-			this.lastUpDate = controle.getLastUpdate();
-		}
+		this.lastUpDate = controle.getLastUpdate();
 		this.lock = controle.getLocado().equalsIgnoreCase("true") ? true : false;
+		log.info("Data Upd:" + this.lastUpDate);
 	}
 	
 }
