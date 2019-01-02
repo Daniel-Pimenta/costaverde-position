@@ -194,17 +194,16 @@ public class PositionService {
 		log.info("GetPeriodo...");
 		log.info(profile);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Calendar c = Calendar.getInstance();
-		if (profile.equalsIgnoreCase("prd")) {
-			c.add(Calendar.HOUR_OF_DAY, -2);
-		}
 		this.dataBD = pr.getHoraDB();
-		this.dataFim = sdf.format(c.getTime());
+		log.info("Data DB :" + this.dataBD);
+		this.dataFim = this.dataBD+"";
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(toDate(dataFim,"yyyy-MM-dd HH:mm:ss"));
 		c.add(Calendar.MINUTE, -30);
 		this.dataIni = sdf.format(c.getTime());
 		log.info("Data Ini:" + this.dataIni);
 		log.info("Data Fim:" + this.dataFim);
-		log.info("Data DB :" + this.dataBD);
 	}
 
 	public void controle(boolean lock) {
